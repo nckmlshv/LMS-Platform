@@ -20,4 +20,4 @@
 - Системный аналитик
 
 ## Документация
-[link text](apple.com)
+[Use Cases]((https://github.com/nckmlshv/LMS-Platform/blob/main/Use%20Cases.md))
