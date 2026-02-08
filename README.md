@@ -20,4 +20,4 @@
 - Системный аналитик
 
 ## Документация
-[Use Cases]((https://github.com/nckmlshv/LMS-Platform/blob/main/Use%20Cases.md))
+[Use Cases]((https://github.com/nckmlshv/LMS-Platform/blob/main/Use%20Cases.md)
