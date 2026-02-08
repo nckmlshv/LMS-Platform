@@ -20,4 +20,7 @@
 - Системный аналитик
 
 ## Документация
+[User Stories](https://github.com/nckmlshv/LMS-Platform/blob/main/User%20Stories.md)
 [Use Cases](https://github.com/nckmlshv/LMS-Platform/blob/main/Use%20Cases.md)
+[C4 Containers Diagram](https://github.com/nckmlshv/LMS-Platform/blob/main/С4%20(Containers)%20Diagram.pdf)
+
