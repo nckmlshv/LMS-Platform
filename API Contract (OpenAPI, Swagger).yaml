@@ -5,58 +5,133 @@ info:
   version: 1.0
 
 paths:
+
   /users:
+  
     post:
-      summary: Создание пользователя 
+      summary: Создание пользователя
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateUser'
+              $ref: '#/components/schemas/UserCreateRequest'
       responses:
         '201':
-          description: Пользователь успешно создан
+          description: Пользователь создан
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserCreateResponse'
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '404': { $ref: '#/components/responses/NotFound' }
-        '429': { $ref: '#/components/responses/TooManyRequests'}
-        default: { $ref: '#/components/responses/ServerError' } 
-        '503': { $ref: '#/components/responses/ServiceUnavailable'} 
+                '400': { $ref: '#/components/responses/BadRequest' }
+                '401': { $ref: '#/components/responses/Unauthorized' }
+                '403': { $ref: '#/components/responses/Forbidden' }
+                '404': { $ref: '#/components/responses/NotFound' }
+                '429': { $ref: '#/components/responses/TooManyRequests'}
+                '503': { $ref: '#/components/responses/ServiceUnavailable'} 
+                default: { $ref: '#/components/responses/ServerError' }
 
 components:
 
     securitySchemes:
 
-        bearerAuth:
+        BearerAuth:
             type: http
             scheme: bearer
             bearerFormat: JWT
 
     schemas:
-
-        CreateUserRequest:
+        
+        UserCreateRequest:
             type: object
             required: [
                 first_name,
                 last_name,
-                gender,
-                date_of_birth,
-                phone,
                 email,
                 password_hash
-                ]
-        properties:
-            <поле>:
-            type: <тип>
-
-    <ИмяСхемыОтвета>:
-      type: object
-      properties:
-        <поле>:
-          type: <тип>
+                ]  
+            properties:
+                first_name:
+                  type: string
+                  minLength: 1
+                  maxLength: 24
+                  example: John
+                last_name:
+                    type: string
+                    minLength: 1
+                    maxLength: 24
+                    example: Doe
+                  middle_name:
+                    type: string
+                    minLength: 1
+                    maxLength: 24
+                    example: Nobodyknows
+                  email:
+                    type: string
+                    minLength: 1
+                    maxLength: 64
+                    pattern: ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$
+                    example: student@lmsplatform.com
+                  password_hash:
+                    type: string
+                    minLength: 8
+                    maxLength: 64
+                  phone:
+                    type: string
+                    minLength: 12
+                    maxLength: 12
+                    example: '+78005553535'
+                  role:
+                    enum: [student, author, advisor]
+                    default: student
+                  avatar_url:
+                    type: string
+                    format: url
+                    example: https://lmsplatform.com/avatars/1.png
+                  recieve_notifications:
+                    enum: [all, important, no]
+                    default: all
+                 
+        UserCreateResponse:
+          type: object
+          required: [
+            first_name,
+            last_name,
+            email]  
+          properties:
+            first_name:
+              type: string
+              minLength: 1
+              maxLength: 24
+              example: John
+            last_name:
+              type: string
+              minLength: 1
+              maxLength: 24
+              example: Doe
+            middle_name:
+              type: string
+              minLength: 1
+              maxLength: 24
+              example: Nobodyknows
+            email:
+              type: string
+              minLength: 1
+              maxLength: 64
+              pattern: ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$
+              example: student@lmsplatform.com
+            phone:
+              type: string
+              minLength: 12
+              maxLength: 12
+              example: '+78005553535'
+            role:
+              enum: [student, author, advisor]
+              default: student
+            avatar_url:
+              type: string
+              format: url
+              example: https://lmsplatform.com/avatars/1.png
+            recieve_notifications:
+              enum: [all, important, no]
+              default: all
