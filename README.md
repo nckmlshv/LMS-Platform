@@ -22,6 +22,6 @@
 ## Документация
 [User Stories](https://github.com/nckmlshv/LMS-Platform/blob/main/User%20Stories.md)  
 [Use Cases](https://github.com/nckmlshv/LMS-Platform/blob/main/Use%20Cases.md)  
-[C4 Containers Diagram](https://github.com/nckmlshv/LMS-Platform/blob/main/С4%20(Containers)%20Diagram.pdf)
+[C4 Containers Diagram](https://github.com/nckmlshv/LMS-Platform/blob/main/С4%20(Containers)%20Diagram.pdf)  
 [API Contract (OpenAPI, Swagger)](https://github.com/nckmlshv/LMS-Platform/blob/d60862ea402598e78064ae9deb3421d08a09b853/API%20Contract%20(OpenAPI%2C%20Swagger).yaml)
 
