@@ -1,1 +1,62 @@
+openapi: 3.0.3
 
+info:
+  title: LMS API
+  version: 1.0
+
+paths:
+  /users:
+    post:
+      summary: Создание пользователя 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '201':
+          description: Пользователь успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreateResponse'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '429': { $ref: '#/components/responses/TooManyRequests'}
+        default: { $ref: '#/components/responses/ServerError' } 
+        '503': { $ref: '#/components/responses/ServiceUnavailable'} 
+
+components:
+
+    securitySchemes:
+
+        bearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+
+    schemas:
+
+        CreateUserRequest:
+            type: object
+            required: [
+                first_name,
+                last_name,
+                gender,
+                date_of_birth,
+                phone,
+                email,
+                password_hash
+                ]
+        properties:
+            <поле>:
+            type: <тип>
+
+    <ИмяСхемыОтвета>:
+      type: object
+      properties:
+        <поле>:
+          type: <тип>
