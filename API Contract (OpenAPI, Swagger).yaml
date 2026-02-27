@@ -2,136 +2,393 @@ openapi: 3.0.3
 
 info:
   title: LMS API
-  version: 1.0
+  version: '1.0'
+
+servers:
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/personal-e23/LMS_API/1.0
+  - url: "https://lms.com/api/v1"
 
 paths:
-
   /users:
-  
     post:
       summary: Создание пользователя
+      operationId: createUser
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/X-Idempotency-Key"
+        - $ref: "#/components/parameters/X-Trace-Id"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserCreateRequest'
+              $ref: "#/components/schemas/CreateUserRequest"
       responses:
-        '201':
+        "201":
           description: Пользователь создан
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserCreateResponse'
-                '400': { $ref: '#/components/responses/BadRequest' }
-                '401': { $ref: '#/components/responses/Unauthorized' }
-                '403': { $ref: '#/components/responses/Forbidden' }
-                '404': { $ref: '#/components/responses/NotFound' }
-                '429': { $ref: '#/components/responses/TooManyRequests'}
-                '503': { $ref: '#/components/responses/ServiceUnavailable'} 
-                default: { $ref: '#/components/responses/ServerError' }
+                $ref: "#/components/schemas/CreateUserResponse"
+        default:
+          $ref: "#/components/responses/Error"
+
+  /users/{user_id}:
+    get:
+      summary: Получение данных пользователя
+      operationId: getUserInfo
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+        - $ref: "#/components/parameters/X-Trace-Id"
+      responses:
+        "200":
+          description: Данные получены
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserInfoResponse"
+        default:
+          $ref: "#/components/responses/Error"
+
+    patch:
+      summary: Обновление данных пользователя
+      operationId: updateUserInfo
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+        - $ref: "#/components/parameters/X-Trace-Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: Данные обновлены
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateUserResponse"
+        default:
+          $ref: "#/components/responses/Error"
+
+    delete:
+      summary: Удаление пользователя
+      operationId: deleteUser
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+        - $ref: "#/components/parameters/X-Trace-Id"
+      responses:
+        "200":
+          description: Пользователь удалён
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteUserResponse"
+        default:
+          $ref: "#/components/responses/Error"
 
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
-    securitySchemes:
+  parameters:
+    UserId:
+      name: user_id
+      in: path
+      required: true
+      description: Идентификатор пользователя
+      schema:
+        type: string
 
-        BearerAuth:
-            type: http
-            scheme: bearer
-            bearerFormat: JWT
+    X-Trace-Id:
+      name: X-Trace-Id
+      in: header
+      required: false
+      description: Идентификатор трассировки запроса
+      schema:
+        type: string
 
-    schemas:
-        
-        UserCreateRequest:
-            type: object
-            required: [
-                first_name,
-                last_name,
-                email,
-                password_hash
-                ]  
-            properties:
-                first_name:
-                  type: string
-                  minLength: 1
-                  maxLength: 24
-                  example: John
-                last_name:
-                    type: string
-                    minLength: 1
-                    maxLength: 24
-                    example: Doe
-                  middle_name:
-                    type: string
-                    minLength: 1
-                    maxLength: 24
-                    example: Nobodyknows
-                  email:
-                    type: string
-                    minLength: 1
-                    maxLength: 64
-                    pattern: ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$
-                    example: student@lmsplatform.com
-                  password_hash:
-                    type: string
-                    minLength: 8
-                    maxLength: 64
-                  phone:
-                    type: string
-                    minLength: 12
-                    maxLength: 12
-                    example: '+78005553535'
-                  role:
-                    enum: [student, author, advisor]
-                    default: student
-                  avatar_url:
-                    type: string
-                    format: url
-                    example: https://lmsplatform.com/avatars/1.png
-                  recieve_notifications:
-                    enum: [all, important, no]
-                    default: all
-                 
-        UserCreateResponse:
-          type: object
-          required: [
-            first_name,
-            last_name,
-            email]  
-          properties:
-            first_name:
-              type: string
-              minLength: 1
-              maxLength: 24
-              example: John
-            last_name:
-              type: string
-              minLength: 1
-              maxLength: 24
-              example: Doe
-            middle_name:
-              type: string
-              minLength: 1
-              maxLength: 24
-              example: Nobodyknows
-            email:
-              type: string
-              minLength: 1
-              maxLength: 64
-              pattern: ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$
-              example: student@lmsplatform.com
-            phone:
-              type: string
-              minLength: 12
-              maxLength: 12
-              example: '+78005553535'
-            role:
-              enum: [student, author, advisor]
-              default: student
-            avatar_url:
-              type: string
-              format: url
-              example: https://lmsplatform.com/avatars/1.png
-            recieve_notifications:
-              enum: [all, important, no]
-              default: all
+    X-Idempotency-Key:
+      name: X-Idempotency-Key
+      in: header
+      required: true
+      description: Ключ идемпотентности
+      schema:
+        type: string
+
+  schemas:
+    CreateUserRequest:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - date_of_birth
+        - role
+        - email
+        - password_hash
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 24
+          example: Donald
+        middle_name:
+          type: string
+          minLength: 1
+          maxLength: 24
+          example: John
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 24
+          example: Trump
+        gender:
+          type: string
+          enum: [male, female]
+        date_of_birth:
+          type: string
+          format: date
+          example: "2000-01-01"
+        email:
+          type: string
+          minLength: 5
+          maxLength: 64
+          example: student@lms.com
+          pattern: "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+        password_hash:
+          type: string
+          minLength: 8
+          maxLength: 64
+        phone_number:
+          type: string
+          minLength: 12
+          maxLength: 12
+          example: "+12345678910"
+        role:
+          type: string
+          enum: [author, student, advisor]
+          default: student
+        avatar_url:
+          type: string
+          format: uri
+          example: "https://lms.com/avatars/1.png"
+        email_notifications:
+          type: string
+          enum: [all, important, "no"]
+          default: all
+        created_at:
+          type: string
+          format: date
+          example: "2026-01-01"
+
+    CreateUserResponse:
+      type: object
+      required:
+        - id
+        - email
+        - role
+      properties:
+        id:
+          type: integer
+          example: 123
+        first_name:
+          type: string
+          example: Donald
+        last_name:
+          type: string
+          example: Trump
+        middle_name:
+          type: string
+          example: John
+        email:
+          type: string
+          example: student@lms.com
+        phone_number:
+          type: string
+          example: "+71234567890"
+        role:
+          type: string
+          enum: [author, student, advisor]
+        avatar_url:
+          type: string
+          format: uri
+          example: "https://lms.com/avatars/1.png"
+        creation_date:
+          type: string
+          format: date-time
+          example: "2025-08-30T14:30:00"
+        created_at:
+          type: string
+          format: date
+          example: "2026-01-01"
+
+    GetUserInfoResponse:
+      type: object
+      required:
+        - id
+        - first_name
+        - middle_name
+        - last_name
+        - date_of_birth
+        - email
+        - role
+      properties:
+        id:
+          type: integer
+          example: 123
+        first_name:
+          type: string
+          example: Donald
+        middle_name:
+          type: string
+          example: John
+        last_name:
+          type: string
+          example: Trump
+        gender:
+          type: string
+          enum: [male, female]
+        date_of_birth:
+          type: string
+          format: date
+          example: "2000-01-01"
+        email:
+          type: string
+          example: student@lms.com
+        password_hash:
+          type: string
+        phone_number:
+          type: string
+          example: "+12345678910"
+        role:
+          type: string
+          enum: [student, author, advisor]
+        avatar_url:
+          type: string
+          format: uri
+          example: "https://lms.com/avatars/1.png"
+        email_notifications:
+          type: string
+          enum: [all, important, "no"]
+        created_at:
+          type: string
+          format: date
+          example: "2026-01-01"
+
+    UpdateUserRequest:
+      type: object
+      description: Все поля опциональны.
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 24
+        middle_name:
+          type: string
+          minLength: 1
+          maxLength: 24
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 24
+        gender:
+          type: string
+          enum: [male, female]
+        date_of_birth:
+          type: string
+          format: date
+        phone_number:
+          type: string
+          minLength: 12
+          maxLength: 12
+        avatar_url:
+          type: string
+          format: uri
+        email_notifications:
+          type: string
+          enum: [all, important, "no"]
+
+    UpdateUserResponse:
+      type: object
+      required:
+        - id
+        - email
+        - role
+      properties:
+        id:
+          type: integer
+          example: 123
+        email:
+          type: string
+          example: student@lms.com
+        role:
+          type: string
+          enum: [author, student, advisor]
+        updated_at:
+          type: string
+          format: date-time
+          example: "2026-02-20T11:22:33Z"
+
+    DeleteUserResponse:
+      type: object
+      required:
+        - id
+        - deleted
+        - deleted_at
+      properties:
+        id:
+          type: integer
+          description: Идентификатор удалённого пользователя
+          example: 123
+        deleted:
+          type: boolean
+          description: Признак успешного удаления
+          example: true
+        deleted_at:
+          type: string
+          format: date-time
+          description: Дата и время удаления
+          example: "2026-02-26T12:34:56Z"
+
+    Error:
+      type: object
+      required:
+        - status_code
+        - title
+        - description
+      properties:
+        status_code:
+          type: integer
+          description: Код ответа
+        title:
+          type: string
+          description: Наименование ошибки
+        description:
+          type: string
+          description: Описание ошибки
+
+  responses:
+    Error:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
