@@ -1,0 +1,426 @@
+openapi: 3.0.3
+
+info:
+  title: LMS API
+  version: "1.0"
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/lms-158/lms_api/1.0
+  - url: https://test.lms.com/api/v1
+    description: Test Server
+
+paths:
+  /users:
+    post:
+      summary: Создание пользователя
+      operationId: createUser
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/X-Idempotency-Key"
+        - $ref: "#/components/parameters/X-Trace-Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: Пользователь создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateUserResponse"
+        default:
+          $ref: "#/components/responses/Error"
+
+  /users/{user_id}:
+    get:
+      summary: Получение данных пользователя
+      operationId: getUserInfo
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+        - $ref: "#/components/parameters/X-Trace-Id"
+      responses:
+        "200":
+          description: Данные получены
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserInfoResponse"
+        default:
+          $ref: "#/components/responses/Error"
+
+    patch:
+      summary: Обновление данных пользователя
+      operationId: updateUserInfo
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+        - $ref: "#/components/parameters/X-Trace-Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: Данные обновлены
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateUserResponse"
+        default:
+          $ref: "#/components/responses/Error"
+
+    delete:
+      summary: Удаление пользователя
+      operationId: deleteUser
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+        - $ref: "#/components/parameters/X-Trace-Id"
+      responses:
+        "204":
+          description: Пользователь успешно удалён
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteUserResponse"
+        default:
+          $ref: "#/components/responses/Error"
+
+components:
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+
+    UserId:
+      name: user_id
+      in: path
+      required: true
+      description: Идентификатор пользователя
+      schema:
+        $ref: "#/components/schemas/UserId"
+
+    X-Trace-Id:
+      name: X-Trace-Id
+      in: header
+      required: false
+      description: Идентификатор трассировки запроса
+      schema:
+        type: string
+
+    X-Idempotency-Key:
+      name: X-Idempotency-Key
+      in: header
+      required: true
+      description: Ключ идемпотентности
+      schema:
+        type: string
+
+  schemas:
+
+    UserId:
+      type: integer
+      example: 123
+
+    FirstName:
+      type: string
+      minLength: 1
+      maxLength: 24
+      example: Donald
+
+    MiddleName:
+      type: string
+      minLength: 1
+      maxLength: 24
+      example: John
+      nullable: true
+
+    LastName:
+      type: string
+      minLength: 1
+      maxLength: 24
+      example: Trump
+
+    Email:
+      type: string
+      format: email
+      maxLength: 64
+      example: student@lms.com
+
+    Role:
+      type: string
+      enum: [author, student, advisor]
+      default: student
+
+    Gender:
+      type: string
+      enum: [male, female]
+      nullable: true
+
+    DateOfBirth:
+      type: string
+      format: date
+      example: "2000-01-01"
+
+    PasswordHash:
+      type: string
+      minLength: 8
+      maxLength: 64
+
+    PhoneNumber:
+      type: string
+      pattern: "^\\+[1-9]\\d{10,14}$"
+      example: "+12345678910"
+      nullable: true
+
+    AvatarUrl:
+      type: string
+      format: uri
+      example: "https://lms.com/avatars/1.png"
+      nullable: true
+
+    EmailNotifications:
+      type: string
+      enum: [all, important, "no"]
+      default: all
+
+    CreatedAt:
+      type: string
+      format: date-time
+      example: "2025-08-30T14:30:00"
+
+    UpdatedAt:
+      type: string
+      format: date-time
+      example: "2026-02-20T11:22:33Z"
+
+    ErrorStatusCode:
+      type: integer
+
+    ErrorTitle:
+      type: string
+
+    ErrorDescription:
+      type: string
+
+    CreateUserRequest:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - date_of_birth
+        - role
+        - email
+        - password_hash
+      properties:
+        first_name:
+          $ref: "#/components/schemas/FirstName"
+        middle_name:
+          $ref: "#/components/schemas/MiddleName"
+        last_name:
+          $ref: "#/components/schemas/LastName"
+        gender:
+          $ref: "#/components/schemas/Gender"
+        date_of_birth:
+          $ref: "#/components/schemas/DateOfBirth"
+        email:
+          $ref: "#/components/schemas/Email"
+        password_hash:
+          $ref: "#/components/schemas/PasswordHash"
+        phone_number:
+          $ref: "#/components/schemas/PhoneNumber"
+        role:
+          $ref: "#/components/schemas/Role"
+        avatar_url:
+          $ref: "#/components/schemas/AvatarUrl"
+        email_notifications:
+          $ref: "#/components/schemas/EmailNotifications"
+
+    CreateUserResponse:
+      type: object
+      required:
+        - id
+        - first_name
+        - last_name
+        - email
+        - role
+      properties:
+        id:
+          $ref: "#/components/schemas/UserId"
+        first_name:
+          $ref: "#/components/schemas/FirstName"
+        last_name:
+          $ref: "#/components/schemas/LastName"
+        middle_name:
+          $ref: "#/components/schemas/MiddleName"
+        email:
+          $ref: "#/components/schemas/Email"
+        phone_number:
+          $ref: "#/components/schemas/PhoneNumber"
+        role:
+          $ref: "#/components/schemas/Role"
+        avatar_url:
+          $ref: "#/components/schemas/AvatarUrl"
+        created_at:
+          $ref: "#/components/schemas/CreatedAt"
+
+    GetUserInfoResponse:
+      type: object
+      required:
+        - id
+        - first_name
+        - middle_name
+        - last_name
+        - gender
+        - date_of_birth
+        - email
+        - phone_number
+        - role
+        - avatar_url
+        - email_notifications
+        - created_at
+      properties:
+        id:
+          $ref: "#/components/schemas/UserId"
+        first_name:
+          $ref: "#/components/schemas/FirstName"
+        middle_name:
+          $ref: "#/components/schemas/MiddleName"
+        last_name:
+          $ref: "#/components/schemas/LastName"
+        gender:
+          $ref: "#/components/schemas/Gender"
+        date_of_birth:
+          $ref: "#/components/schemas/DateOfBirth"
+        email:
+          $ref: "#/components/schemas/Email"
+        phone_number:
+          $ref: "#/components/schemas/PhoneNumber"
+        role:
+          $ref: "#/components/schemas/Role"
+        avatar_url:
+          $ref: "#/components/schemas/AvatarUrl"
+        email_notifications:
+          $ref: "#/components/schemas/EmailNotifications"
+        created_at:
+          $ref: "#/components/schemas/CreatedAt"
+
+    UpdateUserRequest:
+      type: object
+      description: Все поля опциональны.
+      properties:
+        first_name:
+          $ref: "#/components/schemas/FirstName"
+        middle_name:
+          $ref: "#/components/schemas/MiddleName"
+        last_name:
+          $ref: "#/components/schemas/LastName"
+        gender:
+          $ref: "#/components/schemas/Gender"
+        date_of_birth:
+          $ref: "#/components/schemas/DateOfBirth"
+        phone_number:
+          $ref: "#/components/schemas/PhoneNumber"
+        email:
+          $ref: "#/components/schemas/Email"
+        avatar_url:
+          $ref: "#/components/schemas/AvatarUrl"
+        email_notifications:
+          $ref: "#/components/schemas/EmailNotifications"
+
+    UpdateUserResponse:
+      type: object
+      required:
+        - id
+        - first_name
+        - middle_name
+        - last_name
+        - gender
+        - date_of_birth
+        - email
+        - phone_number
+        - role
+        - avatar_url
+        - email_notifications
+      properties:
+        id:
+          $ref: "#/components/schemas/UserId"
+        first_name:
+          $ref: "#/components/schemas/FirstName"
+        middle_name:
+          $ref: "#/components/schemas/MiddleName"
+        last_name:
+          $ref: "#/components/schemas/LastName"
+        gender:
+          $ref: "#/components/schemas/Gender"
+        date_of_birth:
+          $ref: "#/components/schemas/DateOfBirth"
+        email:
+          $ref: "#/components/schemas/Email"
+        phone_number:
+          $ref: "#/components/schemas/PhoneNumber"
+        role:
+          $ref: "#/components/schemas/Role"
+        avatar_url:
+          $ref: "#/components/schemas/AvatarUrl"
+        email_notifications:
+          $ref: "#/components/schemas/EmailNotifications"
+        created_at:
+          $ref: "#/components/schemas/CreatedAt"
+        updated_at:
+          $ref: "#/components/schemas/UpdatedAt"
+
+    DeleteUserResponse:
+      type: object
+      required:
+        - status_code
+        - description
+      properties:
+        status_code:
+          type: integer
+          example: 200
+        description:
+          type: string
+          example: Пользователь успешно удалён
+
+    Error:
+      type: object
+      required:
+        - status_code
+        - title
+        - description
+      properties:
+        status_code:
+          $ref: "#/components/schemas/ErrorStatusCode"
+        title:
+          $ref: "#/components/schemas/ErrorTitle"
+        description:
+          $ref: "#/components/schemas/ErrorDescription"
+
+  responses:
+    Error:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
