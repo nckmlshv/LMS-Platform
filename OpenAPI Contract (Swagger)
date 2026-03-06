@@ -5,9 +5,6 @@ info:
   version: "1.0"
 
 servers:
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/lms-158/lms_api/1.0
   - url: https://test.lms.com/api/v1
     description: Test Server
 
