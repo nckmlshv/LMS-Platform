@@ -2,11 +2,11 @@ openapi: 3.0.3
 
 info:
   title: LMS API
-  version: "1.0"
+  version: '1.0'
 
 servers:
-  - url: https://test.lms.com/api/v1
-    description: Test Server
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/personal-e23/LMS_API/1.0
 
 paths:
   /users:
@@ -90,8 +90,8 @@ paths:
         - $ref: "#/components/parameters/UserId"
         - $ref: "#/components/parameters/X-Trace-Id"
       responses:
-        "204":
-          description: Пользователь успешно удалён
+        "200":
+          description: Пользователь удалён
           content:
             application/json:
               schema:
@@ -99,8 +99,28 @@ paths:
         default:
           $ref: "#/components/responses/Error"
 
-components:
+  /courses:
+    get:
+      summary: Получение списка курсов
+      operationId: getCourses
+      tags: [Courses]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/X-Trace-Id"
+        - $ref: '#/components/parameters/Coursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        "200":
+          description: Данные получены
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCoursesResponse"
+        default:
+          $ref: "#/components/responses/Error"
 
+components:
   securitySchemes:
     BearerAuth:
       type: http
@@ -108,19 +128,18 @@ components:
       bearerFormat: JWT
 
   parameters:
-
     UserId:
       name: user_id
       in: path
       required: true
       description: Идентификатор пользователя
       schema:
-        $ref: "#/components/schemas/UserId"
+        type: string
 
     X-Trace-Id:
       name: X-Trace-Id
       in: header
-      required: false
+      required: true
       description: Идентификатор трассировки запроса
       schema:
         type: string
@@ -133,93 +152,23 @@ components:
       schema:
         type: string
 
+    Coursor:
+      name: Coursor
+      in: query
+      required: true
+      description: Значение курсора для пагинации
+      schema:
+        type: string
+
+    Limit:
+      name: Limit
+      in: query
+      required: true
+      description: Значение лимитера для пагинации
+      schema:
+        type: integer
+
   schemas:
-
-    UserId:
-      type: integer
-      example: 123
-
-    FirstName:
-      type: string
-      minLength: 1
-      maxLength: 24
-      example: Donald
-
-    MiddleName:
-      type: string
-      minLength: 1
-      maxLength: 24
-      example: John
-      nullable: true
-
-    LastName:
-      type: string
-      minLength: 1
-      maxLength: 24
-      example: Trump
-
-    Email:
-      type: string
-      format: email
-      maxLength: 64
-      example: student@lms.com
-
-    Role:
-      type: string
-      enum: [author, student, advisor]
-      default: student
-
-    Gender:
-      type: string
-      enum: [male, female]
-      nullable: true
-
-    DateOfBirth:
-      type: string
-      format: date
-      example: "2000-01-01"
-
-    PasswordHash:
-      type: string
-      minLength: 8
-      maxLength: 64
-
-    PhoneNumber:
-      type: string
-      pattern: "^\\+[1-9]\\d{10,14}$"
-      example: "+12345678910"
-      nullable: true
-
-    AvatarUrl:
-      type: string
-      format: uri
-      example: "https://lms.com/avatars/1.png"
-      nullable: true
-
-    EmailNotifications:
-      type: string
-      enum: [all, important, "no"]
-      default: all
-
-    CreatedAt:
-      type: string
-      format: date-time
-      example: "2025-08-30T14:30:00"
-
-    UpdatedAt:
-      type: string
-      format: date-time
-      example: "2026-02-20T11:22:33Z"
-
-    ErrorStatusCode:
-      type: integer
-
-    ErrorTitle:
-      type: string
-
-    ErrorDescription:
-      type: string
-
     CreateUserRequest:
       type: object
       required:
@@ -231,55 +180,99 @@ components:
         - password_hash
       properties:
         first_name:
-          $ref: "#/components/schemas/FirstName"
+          type: string
+          minLength: 1
+          maxLength: 24
+          example: Donald
         middle_name:
-          $ref: "#/components/schemas/MiddleName"
+          type: string
+          minLength: 1
+          maxLength: 24
+          example: John
         last_name:
-          $ref: "#/components/schemas/LastName"
+          type: string
+          minLength: 1
+          maxLength: 24
+          example: Trump
         gender:
-          $ref: "#/components/schemas/Gender"
+          type: string
+          enum: [male, female]
         date_of_birth:
-          $ref: "#/components/schemas/DateOfBirth"
+          type: string
+          format: date
+          example: "2000-01-01"
         email:
-          $ref: "#/components/schemas/Email"
+          type: string
+          minLength: 5
+          maxLength: 64
+          example: student@lms.com
+          pattern: "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
         password_hash:
-          $ref: "#/components/schemas/PasswordHash"
+          type: string
+          minLength: 8
+          maxLength: 64
         phone_number:
-          $ref: "#/components/schemas/PhoneNumber"
+          type: string
+          minLength: 12
+          maxLength: 12
+          example: "+12345678910"
         role:
-          $ref: "#/components/schemas/Role"
+          type: string
+          enum: [author, student, advisor]
+          default: student
         avatar_url:
-          $ref: "#/components/schemas/AvatarUrl"
+          type: string
+          format: uri
+          example: "https://lms.com/avatars/1.png"
         email_notifications:
-          $ref: "#/components/schemas/EmailNotifications"
+          type: string
+          enum: [all, important, "no"]
+          default: all
+        created_at:
+          type: string
+          format: date
+          example: "2026-01-01"
 
     CreateUserResponse:
       type: object
       required:
         - id
-        - first_name
-        - last_name
         - email
         - role
       properties:
         id:
-          $ref: "#/components/schemas/UserId"
+          type: integer
+          example: 123
         first_name:
-          $ref: "#/components/schemas/FirstName"
+          type: string
+          example: Donald
         last_name:
-          $ref: "#/components/schemas/LastName"
+          type: string
+          example: Trump
         middle_name:
-          $ref: "#/components/schemas/MiddleName"
+          type: string
+          example: John
         email:
-          $ref: "#/components/schemas/Email"
+          type: string
+          example: student@lms.com
         phone_number:
-          $ref: "#/components/schemas/PhoneNumber"
+          type: string
+          example: "+71234567890"
         role:
-          $ref: "#/components/schemas/Role"
+          type: string
+          enum: [author, student, advisor]
         avatar_url:
-          $ref: "#/components/schemas/AvatarUrl"
+          type: string
+          format: uri
+          example: "https://lms.com/avatars/1.png"
+        creation_date:
+          type: string
+          format: date-time
+          example: "2025-08-30T14:30:00"
         created_at:
-          $ref: "#/components/schemas/CreatedAt"
+          type: string
+          format: date
+          example: "2026-01-01"
 
     GetUserInfoResponse:
       type: object
@@ -288,117 +281,159 @@ components:
         - first_name
         - middle_name
         - last_name
-        - gender
         - date_of_birth
         - email
-        - phone_number
         - role
-        - avatar_url
-        - email_notifications
-        - created_at
       properties:
         id:
-          $ref: "#/components/schemas/UserId"
+          type: integer
+          example: 123
         first_name:
-          $ref: "#/components/schemas/FirstName"
+          type: string
+          example: Donald
         middle_name:
-          $ref: "#/components/schemas/MiddleName"
+          type: string
+          example: John
         last_name:
-          $ref: "#/components/schemas/LastName"
+          type: string
+          example: Trump
         gender:
-          $ref: "#/components/schemas/Gender"
+          type: string
+          enum: [male, female]
         date_of_birth:
-          $ref: "#/components/schemas/DateOfBirth"
+          type: string
+          format: date
+          example: "2000-01-01"
         email:
-          $ref: "#/components/schemas/Email"
+          type: string
+          example: student@lms.com
+        password_hash:
+          type: string
         phone_number:
-          $ref: "#/components/schemas/PhoneNumber"
+          type: string
+          example: "+12345678910"
         role:
-          $ref: "#/components/schemas/Role"
+          type: string
+          enum: [student, author, advisor]
         avatar_url:
-          $ref: "#/components/schemas/AvatarUrl"
+          type: string
+          format: uri
+          example: "https://lms.com/avatars/1.png"
         email_notifications:
-          $ref: "#/components/schemas/EmailNotifications"
+          type: string
+          enum: [all, important, "no"]
         created_at:
-          $ref: "#/components/schemas/CreatedAt"
+          type: string
+          format: date
+          example: "2026-01-01"
 
     UpdateUserRequest:
       type: object
       description: Все поля опциональны.
       properties:
         first_name:
-          $ref: "#/components/schemas/FirstName"
+          type: string
+          minLength: 1
+          maxLength: 24
         middle_name:
-          $ref: "#/components/schemas/MiddleName"
+          type: string
+          minLength: 1
+          maxLength: 24
         last_name:
-          $ref: "#/components/schemas/LastName"
+          type: string
+          minLength: 1
+          maxLength: 24
         gender:
-          $ref: "#/components/schemas/Gender"
+          type: string
+          enum: [male, female]
         date_of_birth:
-          $ref: "#/components/schemas/DateOfBirth"
+          type: string
+          format: date
         phone_number:
-          $ref: "#/components/schemas/PhoneNumber"
-        email:
-          $ref: "#/components/schemas/Email"
+          type: string
+          minLength: 12
+          maxLength: 12
         avatar_url:
-          $ref: "#/components/schemas/AvatarUrl"
+          type: string
+          format: uri
         email_notifications:
-          $ref: "#/components/schemas/EmailNotifications"
+          type: string
+          enum: [all, important, "no"]
 
     UpdateUserResponse:
       type: object
       required:
         - id
-        - first_name
-        - middle_name
-        - last_name
-        - gender
-        - date_of_birth
         - email
-        - phone_number
         - role
-        - avatar_url
-        - email_notifications
       properties:
         id:
-          $ref: "#/components/schemas/UserId"
-        first_name:
-          $ref: "#/components/schemas/FirstName"
-        middle_name:
-          $ref: "#/components/schemas/MiddleName"
-        last_name:
-          $ref: "#/components/schemas/LastName"
-        gender:
-          $ref: "#/components/schemas/Gender"
-        date_of_birth:
-          $ref: "#/components/schemas/DateOfBirth"
+          type: integer
+          example: 123
         email:
-          $ref: "#/components/schemas/Email"
-        phone_number:
-          $ref: "#/components/schemas/PhoneNumber"
+          type: string
+          example: student@lms.com
         role:
-          $ref: "#/components/schemas/Role"
-        avatar_url:
-          $ref: "#/components/schemas/AvatarUrl"
-        email_notifications:
-          $ref: "#/components/schemas/EmailNotifications"
-        created_at:
-          $ref: "#/components/schemas/CreatedAt"
+          type: string
+          enum: [author, student, advisor]
         updated_at:
-          $ref: "#/components/schemas/UpdatedAt"
+          type: string
+          format: date-time
+          example: "2026-02-20T11:22:33Z"
 
     DeleteUserResponse:
       type: object
       required:
-        - status_code
-        - description
+        - id
+        - deleted
+        - deleted_at
       properties:
-        status_code:
+        id:
           type: integer
-          example: 200
+          description: Идентификатор удалённого пользователя
+          example: 123
+        deleted:
+          type: boolean
+          description: Признак успешного удаления
+          example: true
+        deleted_at:
+          type: string
+          format: date-time
+          description: Дата и время удаления
+          example: "2026-02-26T12:34:56Z"
+
+    GetCoursesResponse:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - area
+        - specialization
+        - author
+      properties:
+        id:
+          type: integer
+          example: 123
+        title:
+          type: string
+          example: "Introduction to Machine Learning"
         description:
           type: string
-          example: Пользователь успешно удалён
+          example: "Course about basics of machine learning algorithms"
+        area:
+          type: string
+          example: "Computer Science"
+        specialization:
+          type: string
+          example: "ML-Engineering"
+        author:
+          type: string
+          example: "ChatGPT"
+        cover:
+          type: string
+          format: uri
+          example: "https://lms.com/covers/1.png"
 
     Error:
       type: object
@@ -408,11 +443,14 @@ components:
         - description
       properties:
         status_code:
-          $ref: "#/components/schemas/ErrorStatusCode"
+          type: integer
+          description: Код ответа
         title:
-          $ref: "#/components/schemas/ErrorTitle"
+          type: string
+          description: Наименование ошибки
         description:
-          $ref: "#/components/schemas/ErrorDescription"
+          type: string
+          description: Описание ошибки
 
   responses:
     Error:
