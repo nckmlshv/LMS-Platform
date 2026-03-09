@@ -258,12 +258,6 @@ components:
       format: date-time
       example: "2026-02-20T11:22:33Z"
 
-    DeletedAtDateTime:
-      type: string
-      format: date-time
-      description: Дата и время удаления
-      example: "2026-02-26T12:34:56Z"
-
     CourseTitle:
       type: string
       example: "Introduction to Machine Learning"
@@ -432,21 +426,14 @@ components:
     DeleteUserResponse:
       type: object
       required:
-        - id
-        - deleted
-        - deleted_at
+        - status_code
+        - description
       properties:
-        id:
-          allOf:
-            - $ref: "#/components/schemas/UserId"
-          description: Идентификатор удалённого пользователя
-        deleted:
-          type: boolean
-          description: Признак успешного удаления
-          example: true
-        deleted_at:
-          $ref: "#/components/schemas/DeletedAtDateTime"
-
+        status_code:
+          type: integer
+        description:
+          type: string
+            
     Course:
       type: object
       required:
@@ -494,15 +481,11 @@ components:
       type: object
       required:
         - status_code
-        - title
         - description
       properties:
         status_code:
           type: integer
           description: Код ответа
-        title:
-          type: string
-          description: Наименование ошибки
         description:
           type: string
           description: Описание ошибки
