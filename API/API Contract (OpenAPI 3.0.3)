@@ -1,0 +1,499 @@
+openapi: 3.0.3
+
+info:
+  title: LMS API
+  version: "1.0"
+
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/personal-e23/LMS_API/1.0
+
+paths:
+  /users:
+    post:
+      summary: Создание пользователя
+      operationId: createUser
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/X-Idempotency-Key"
+        - $ref: "#/components/parameters/X-Trace-Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: Пользователь создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateUserResponse"
+        default:
+          $ref: "#/components/responses/Error"
+
+  /users/{user_id}:
+    get:
+      summary: Получение данных пользователя
+      operationId: getUserInfo
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+        - $ref: "#/components/parameters/X-Trace-Id"
+      responses:
+        "200":
+          description: Данные получены
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserInfoResponse"
+        default:
+          $ref: "#/components/responses/Error"
+
+    patch:
+      summary: Обновление данных пользователя
+      operationId: updateUserInfo
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+        - $ref: "#/components/parameters/X-Trace-Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: Данные обновлены
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateUserResponse"
+        default:
+          $ref: "#/components/responses/Error"
+
+    delete:
+      summary: Удаление пользователя
+      operationId: deleteUser
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+        - $ref: "#/components/parameters/X-Trace-Id"
+      responses:
+        "200":
+          description: Пользователь удалён
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteUserResponse"
+        default:
+          $ref: "#/components/responses/Error"
+
+  /courses:
+    get:
+      summary: Получение списка курсов
+      operationId: getCourses
+      tags: [Courses]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/X-Trace-Id"
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
+      responses:
+        "200":
+          description: Данные получены
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCoursesResponse"
+          links:
+            NextCoursesPage:
+              operationId: getCourses
+              parameters:
+                cursor: "$response.body#/next_cursor"
+                limit: "$request.query.limit"
+              description: Используется next_cursor из текущего ответа, как параметр следующего запроса
+        default:
+          $ref: "#/components/responses/Error"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    UserId:
+      name: user_id
+      in: path
+      required: true
+      description: Идентификатор пользователя
+      schema:
+        type: string
+
+    X-Trace-Id:
+      name: X-Trace-Id
+      in: header
+      required: true
+      description: Идентификатор трассировки запроса
+      schema:
+        type: string
+
+    X-Idempotency-Key:
+      name: X-Idempotency-Key
+      in: header
+      required: true
+      description: Ключ идемпотентности
+      schema:
+        type: string
+
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Курсор для получения следующей страницы. Для первого запроса не передаётся.
+      schema:
+        type: string
+
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Количество элементов на странице
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+  schemas:
+    UserId:
+      type: integer
+      example: 123
+
+    FirstName:
+      type: string
+      minLength: 1
+      maxLength: 24
+      example: Donald
+
+    MiddleName:
+      type: string
+      minLength: 1
+      maxLength: 24
+      example: John
+
+    LastName:
+      type: string
+      minLength: 1
+      maxLength: 24
+      example: Trump
+
+    Gender:
+      type: string
+      enum: [male, female]
+
+    DateOfBirth:
+      type: string
+      format: date
+      example: "2000-01-01"
+
+    Email:
+      type: string
+      minLength: 5
+      maxLength: 64
+      example: student@lms.com
+      pattern: "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+
+    PasswordHash:
+      type: string
+      minLength: 8
+      maxLength: 64
+
+    PhoneNumber:
+      type: string
+      minLength: 12
+      maxLength: 12
+      example: "+12345678910"
+
+    UserRole:
+      type: string
+      enum: [author, student, advisor]
+      default: student
+
+    AvatarUrl:
+      type: string
+      format: uri
+      example: "https://lms.com/avatars/1.png"
+
+    EmailNotifications:
+      type: string
+      enum: [all, important, "no"]
+      default: all
+
+    CreatedAtDate:
+      type: string
+      format: date
+      example: "2026-01-01"
+
+    CreatedAtDateTime:
+      type: string
+      format: date-time
+      example: "2025-08-30T14:30:00"
+
+    UpdatedAtDateTime:
+      type: string
+      format: date-time
+      example: "2026-02-20T11:22:33Z"
+
+    CourseTitle:
+      type: string
+      example: "Introduction to Machine Learning"
+
+    CourseDescription:
+      type: string
+      example: "Course about basics of machine learning algorithms"
+
+    CourseArea:
+      type: string
+      example: "Computer Science"
+
+    CourseSpecialization:
+      type: string
+      example: "ML-Engineering"
+
+    CourseAuthor:
+      type: string
+      example: "ChatGPT"
+
+    CourseCover:
+      type: string
+      format: uri
+      example: "https://lms.com/covers/1.png"
+
+    CreateUserRequest:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - date_of_birth
+        - role
+        - email
+        - password_hash
+      properties:
+        first_name:
+          $ref: "#/components/schemas/FirstName"
+        middle_name:
+          $ref: "#/components/schemas/MiddleName"
+        last_name:
+          $ref: "#/components/schemas/LastName"
+        gender:
+          $ref: "#/components/schemas/Gender"
+        date_of_birth:
+          $ref: "#/components/schemas/DateOfBirth"
+        email:
+          $ref: "#/components/schemas/Email"
+        password_hash:
+          $ref: "#/components/schemas/PasswordHash"
+        phone_number:
+          $ref: "#/components/schemas/PhoneNumber"
+        role:
+          $ref: "#/components/schemas/UserRole"
+        avatar_url:
+          $ref: "#/components/schemas/AvatarUrl"
+        email_notifications:
+          $ref: "#/components/schemas/EmailNotifications"
+        created_at:
+          $ref: "#/components/schemas/CreatedAtDate"
+
+    CreateUserResponse:
+      type: object
+      required:
+        - id
+        - email
+        - role
+      properties:
+        id:
+          $ref: "#/components/schemas/UserId"
+        first_name:
+          $ref: "#/components/schemas/FirstName"
+        last_name:
+          $ref: "#/components/schemas/LastName"
+        middle_name:
+          $ref: "#/components/schemas/MiddleName"
+        email:
+          $ref: "#/components/schemas/Email"
+        phone_number:
+          type: string
+          example: "+71234567890"
+        role:
+          $ref: "#/components/schemas/UserRole"
+        avatar_url:
+          $ref: "#/components/schemas/AvatarUrl"
+        creation_date:
+          $ref: "#/components/schemas/CreatedAtDateTime"
+        created_at:
+          $ref: "#/components/schemas/CreatedAtDate"
+
+    GetUserInfoResponse:
+      type: object
+      required:
+        - id
+        - first_name
+        - middle_name
+        - last_name
+        - date_of_birth
+        - email
+        - role
+      properties:
+        id:
+          $ref: "#/components/schemas/UserId"
+        first_name:
+          $ref: "#/components/schemas/FirstName"
+        middle_name:
+          $ref: "#/components/schemas/MiddleName"
+        last_name:
+          $ref: "#/components/schemas/LastName"
+        gender:
+          $ref: "#/components/schemas/Gender"
+        date_of_birth:
+          $ref: "#/components/schemas/DateOfBirth"
+        email:
+          $ref: "#/components/schemas/Email"
+        password_hash:
+          $ref: "#/components/schemas/PasswordHash"
+        phone_number:
+          $ref: "#/components/schemas/PhoneNumber"
+        role:
+          type: string
+          enum: [student, author, advisor]
+        avatar_url:
+          $ref: "#/components/schemas/AvatarUrl"
+        email_notifications:
+          $ref: "#/components/schemas/EmailNotifications"
+        created_at:
+          $ref: "#/components/schemas/CreatedAtDate"
+
+    UpdateUserRequest:
+      type: object
+      description: Все поля опциональны.
+      properties:
+        first_name:
+          $ref: "#/components/schemas/FirstName"
+        middle_name:
+          $ref: "#/components/schemas/MiddleName"
+        last_name:
+          $ref: "#/components/schemas/LastName"
+        gender:
+          $ref: "#/components/schemas/Gender"
+        date_of_birth:
+          $ref: "#/components/schemas/DateOfBirth"
+        phone_number:
+          $ref: "#/components/schemas/PhoneNumber"
+        avatar_url:
+          $ref: "#/components/schemas/AvatarUrl"
+        email_notifications:
+          $ref: "#/components/schemas/EmailNotifications"
+
+    UpdateUserResponse:
+      type: object
+      required:
+        - id
+        - email
+        - role
+      properties:
+        id:
+          $ref: "#/components/schemas/UserId"
+        email:
+          $ref: "#/components/schemas/Email"
+        role:
+          $ref: "#/components/schemas/UserRole"
+        updated_at:
+          $ref: "#/components/schemas/UpdatedAtDateTime"
+
+    DeleteUserResponse:
+      type: object
+      required:
+        - status_code
+        - description
+      properties:
+        status_code:
+          type: integer
+        description:
+          type: string
+            
+    Course:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - area
+        - specialization
+        - author
+      properties:
+        id:
+          $ref: "#/components/schemas/UserId"
+        title:
+          $ref: "#/components/schemas/CourseTitle"
+        description:
+          $ref: "#/components/schemas/CourseDescription"
+        area:
+          $ref: "#/components/schemas/CourseArea"
+        specialization:
+          $ref: "#/components/schemas/CourseSpecialization"
+        author:
+          $ref: "#/components/schemas/CourseAuthor"
+        cover:
+          $ref: "#/components/schemas/CourseCover"
+
+    GetCoursesResponse:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          description: Список курсов на текущей странице
+          items:
+            $ref: "#/components/schemas/Course"
+        next_cursor:
+          type: string
+          nullable: true
+          description: |
+            Курсор для следующей страницы.
+            Если страниц больше нет, возвращается null.
+          example: "eyJpZCI6MTI0fQ=="
+
+    Error:
+      type: object
+      required:
+        - status_code
+        - description
+      properties:
+        status_code:
+          type: integer
+          description: Код ответа
+        description:
+          type: string
+          description: Описание ошибки
+
+  responses:
+    Error:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
