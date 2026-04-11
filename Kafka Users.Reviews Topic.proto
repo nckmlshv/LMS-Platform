@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package users.reviews;
+
+import "google/protobuf/timestamp.proto";
+
+enum ReviewEventType {
+  UNSPECIFIED = 0;
+  CREATED = 1;
+  EDITED = 2;
+  LIKED = 3;
+  COMMENTED = 4;
+}
+
+message ReviewEvent {
+
+  string event_id = 1;
+
+  string review_id = 2;
+  string user_id = 3;
+
+  ReviewEventType type = 4;
+
+  // Поля для типов CREATE, EDIT
+  string text = 5;
+  string new_text = 6;
+  repeated string pics_urls = 7;
+
+  // Поле для COMMENT
+  string comment = 8;
+
+  google.protobuf.Timestamp event_time = 9;
+}
