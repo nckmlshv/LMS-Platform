@@ -18,16 +18,18 @@ message ReviewEvent {
 
   string review_id = 2;
   string user_id = 3;
+  string created_at = 4;
+  string updated_at = 5;
 
-  ReviewEventType type = 4;
+  ReviewEventType type = 6;
 
   // Поля для типов CREATE, EDIT
-  string text = 5;
-  string new_text = 6;
-  repeated string pics_urls = 7;
+  string text = 7;
+  string new_text = 8;
+  repeated string pics_urls = 9;
 
   // Поле для COMMENT
-  string comment = 8;
+  string comment = 10;
 
-  google.protobuf.Timestamp event_time = 9;
+  google.protobuf.Timestamp event_time = 11;
 }
