@@ -1,15 +1,14 @@
 syntax = "proto3";
 
-package users.reviews;
+package reviews.events;
 
 import "google/protobuf/timestamp.proto";
 
-enum ReviewEventType {
+enum EventType {
   UNSPECIFIED = 0;
   CREATED = 1;
-  EDITED = 2;
-  LIKED = 3;
-  COMMENTED = 4;
+  UPDATED = 2;
+  DELETED = 3;
 }
 
 message ReviewEvent {
