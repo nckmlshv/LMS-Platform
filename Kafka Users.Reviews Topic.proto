@@ -4,25 +4,29 @@ package reviews.events;
 
 import "google/protobuf/timestamp.proto";
 
-enum ReviewEventType {
+enum EventType {
   UNSPECIFIED = 0;
-  REVIEW_CREATED = 1;
-  REVIEW_UPDATED = 2;
-  REVIEW_DELETED = 3;
+  CREATED = 1;
+  UPDATED = 2;
+  DELETED = 3;
 }
 
-message ReviewEvent {
+message Event {
 
-  string event_id = 1;
+  string id = 1;
   ReviewEventType type = 2;
-  google.protobuf.Timestamp event_time = 3;
+  google.protobuf.Timestamp created_at = 3;
+  Review review = 4;
+}
 
-  string review_id = 4;
-  string user_id = 5;
+message Review {
 
-  string text = 6;
-  repeated string pics_urls = 7;
+  string id = 1;
+  string user_id = 2;
 
-  google.protobuf.Timestamp created_at = 8;
-  google.protobuf.Timestamp updated_at = 9;
+  string text = 3;
+  repeated string pics_urls = 4;
+
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
 }
