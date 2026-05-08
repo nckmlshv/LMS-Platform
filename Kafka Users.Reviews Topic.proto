@@ -14,7 +14,7 @@ enum EventType {
 message Event {
 
   string id = 1; // id ивента
-  ReviewEventType type = 2; // тип ивента
+  EventType type = 2; // тип ивента
   google.protobuf.Timestamp created_at = 3; // дата и время ивента
   Review review = 4; // модель отзыва
 }
