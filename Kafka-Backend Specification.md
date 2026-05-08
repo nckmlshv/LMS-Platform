@@ -18,6 +18,8 @@
 
 ## Входные данные
 
+Ссылка на контракт Kafka: https://github.com/nckmlshv/LMS-Platform/blob/main/Kafka%20Users.Reviews%20Topic.proto
+
 Список полей:
 
 | Поле        | Тип данных             | Обязательное | Ограничения / Описание                                                  |
