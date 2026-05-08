@@ -5,28 +5,28 @@ package reviews.events;
 import "google/protobuf/timestamp.proto";
 
 enum EventType {
-  UNSPECIFIED = 0;
-  CREATED = 1;
-  UPDATED = 2;
-  DELETED = 3;
+  UNSPECIFIED = 0; // не выбрано
+  CREATED = 1; // создание отзыва
+  UPDATED = 2; // редактирование отзыва
+  DELETED = 3; // удаление отзыва
 }
 
 message Event {
 
-  string id = 1;
-  ReviewEventType type = 2;
-  google.protobuf.Timestamp created_at = 3;
-  Review review = 4;
+  string id = 1; // id ивента
+  ReviewEventType type = 2; // тип ивента
+  google.protobuf.Timestamp created_at = 3; // дата и время ивента
+  Review review = 4; // модель отзыва
 }
 
 message Review {
 
-  string id = 1;
-  string user_id = 2;
+  string id = 1; // id отзыва (передается при публикации, обновлении, удалении)
+  string user_id = 2; // id пользователя (передается при публикации)
 
-  string text = 3;
-  repeated string pics_urls = 4;
+  string text = 3; // текст отзыва (передается при публикации, обновлении)
+  repeated string pics_urls = 4; // картинки (передается при публикации, обновлении)
 
-  google.protobuf.Timestamp created_at = 5;
-  google.protobuf.Timestamp updated_at = 6;
+  google.protobuf.Timestamp created_at = 5; // дата и время создаеия отзыва
+  google.protobuf.Timestamp updated_at = 6; // дата и время обновления отзыва
 }
